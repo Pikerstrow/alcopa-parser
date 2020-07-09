@@ -53,7 +53,7 @@ class AuctionCarsParser
             $json = html_entity_decode($json, ENT_COMPAT, 'UTF-8');
             $json = stripcslashes($json);
             $json = trim($json, "\ \t\n\r\0\x0B'");
-//            $json = str_replace('\€', '€', $json);
+            $json = str_replace('\\', '', $json);
 //            dd($json);
             return dd(json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE));
         } catch (\Throwable $exception) {
