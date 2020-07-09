@@ -7,5 +7,8 @@ return [
         'end_date' => '', //Are not available on web-site at the moment. Included for better extension.
         'city' => 'span.text-prim',
         'lots_number' => 'span.text-graynorm'
-    ]
+    ],
+    'cars' => [
+        'make' => ''
+    ],
 ];
