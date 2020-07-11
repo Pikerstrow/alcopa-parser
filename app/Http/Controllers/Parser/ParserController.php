@@ -25,8 +25,7 @@ class ParserController extends Controller
                 );
                 $cars_parser = new AuctionCarsJsonParser();
                 $auction_cars_data = $cars_parser->parse($auction->url);
-                $cars_url = array_column($auction_cars_data['car'], 'url');
-                $test[] = $cars_url;
+                $test[] = $auction_cars_data;
             }
             dd($test);
         } catch (\Throwable $exception) {
