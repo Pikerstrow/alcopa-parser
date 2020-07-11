@@ -7,7 +7,7 @@ use App\Exceptions\AuctionsParserException;
 use Carbon\Carbon;
 use Symfony\Component\DomCrawler\Crawler;
 
-class AuctionCarsParser
+class AuctionCarsJsonParser
 {
     private const BASE_URL = 'https://www.alcopa-auction.fr';
     private const STREAM_CONTEXT_OPTIONS = [
@@ -25,8 +25,8 @@ class AuctionCarsParser
     {
         try {
             $html = $this->getWebPage($uri);
-//            $html = include('test.php');
-            preg_match('#window\.Alcopa\.searchResultsJSONString =(.*?);#i', $html, $matches);
+            $html = preg_replace('/\s+/', ' ', $html);
+            preg_match('#searchResultsJSONString\s?=\s?\'(.*)\';#i', $html, $matches);
             if(!empty($matches) && isset($matches[1])){
                 $encoded_json = $matches[1];
                 return $this->decodeJson($encoded_json);
@@ -48,14 +48,11 @@ class AuctionCarsParser
     private function decodeJson(string $encoded_json)
     {
         try {
-            $json = preg_replace("/u([0-9a-fA-F]{4})/", "&#x\\1;", $encoded_json);
-            $json = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $json);
+            $json = preg_replace("/\\\\u([0-9a-fA-F]{4})/", "&#x\\1;", $encoded_json);
+            $json = iconv("UTF-8", "ISO-8859-1//IGNORE", $json);
             $json = html_entity_decode($json, ENT_COMPAT, 'UTF-8');
             $json = stripcslashes($json);
-            $json = trim($json, "\ \t\n\r\0\x0B'");
-            $json = str_replace('\\', '', $json);
-//            dd($json);
-            return dd(json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE));
+            return json_decode($json, true, 512, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         } catch (\Throwable $exception) {
             throw new \Exception('Decode json with cars info operation failed. Reason: ' .$exception->getMessage());
         }
