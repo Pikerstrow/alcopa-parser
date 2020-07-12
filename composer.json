@@ -38,7 +38,11 @@
         "psr-4": {
             "App\\": "app/"
         },
+        "files": [
+            "app/parser/constants.php"
+        ],
         "classmap": [
+            "app/parser",
             "database/seeds",
             "database/factories"
         ]

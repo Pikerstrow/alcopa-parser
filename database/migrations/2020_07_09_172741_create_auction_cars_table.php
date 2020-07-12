@@ -18,9 +18,11 @@ class CreateAuctionCarsTable extends Migration
             $table->bigInteger('car_make_id')->unsigned()->index();
             $table->bigInteger('car_model_id')->unsigned()->index();
             $table->bigInteger('auction_id')->unsigned()->index();
+            $table->bigInteger('alcopa_car_id')->unsigned()->index();
             $table->string('category')->index();
             $table->bigInteger('lot_number')->unsigned()->index();
             $table->bigInteger('lot_price')->unsigned()->index();
+            $table->string('lot_price_currency')->index();
             $table->string('finish')->nullable();
             $table->string('registration_number')->nullable();
             $table->string('fuel_type')->nullable();

@@ -16,6 +16,7 @@ class CreateCarModelsTable extends Migration
         Schema::create('car_models', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('car_make_id')->unsigned()->index();
+            $table->string('name');
             $table->timestamps();
         });
     }

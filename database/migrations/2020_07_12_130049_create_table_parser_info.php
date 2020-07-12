@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCarMakesTable extends Migration
+class CreateTableParserInfo extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateCarMakesTable extends Migration
      */
     public function up()
     {
-        Schema::create('car_makes', function (Blueprint $table) {
+        Schema::create('parser_info', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->timestamp('last_parsing_date')->nullable();
+            $table->tinyInteger('last_parsing_result')->unsigned()->default(1);
+            $table->text('parsed_auctions')->nullable();
+            $table->text('parsed_cars')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ class CreateCarMakesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('car_makes');
+        Schema::dropIfExists('table_parser_info');
     }
 }

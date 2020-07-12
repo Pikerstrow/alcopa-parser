@@ -4,14 +4,14 @@
 namespace App\Parser;
 
 use App\Exceptions\AuctionsParserException;
-use Carbon\Carbon;
+use App\Parser\Traits\SharedMethods;
 use Symfony\Component\DomCrawler\Crawler;
 
 class AuctionsParser
 {
-    private const BASE_URL = 'https://www.alcopa-auction.fr/en/';
+    use SharedMethods;
+
     private const NEEDLE_H4 = 'Room sale';
-//    private const AUCTION_DATA_TAG = 'div.p-2';
     private const STREAM_CONTEXT_OPTIONS = [
         'http' => [
             'method' => "GET",
@@ -32,6 +32,10 @@ class AuctionsParser
     }
 
 
+    /**
+     * @return array
+     * @throws AuctionsParserException
+     */
     public function parse()
     {
         $auctions_data = [];
@@ -39,8 +43,8 @@ class AuctionsParser
 
         try {
             $context = stream_context_create(static::STREAM_CONTEXT_OPTIONS);
-            $html    = file_get_contents(static::BASE_URL, false, $context);
-            $crawler = new Crawler(null, static::BASE_URL);
+            $html    = file_get_contents(BASE_URL, false, $context);
+            $crawler = new Crawler(null, BASE_URL);
             $crawler->addHtmlContent($html, 'UTF-8');
 
             //Find all auctions blocks (Room sales, Web sale, etc)
@@ -65,7 +69,7 @@ class AuctionsParser
                             //We don't need to handle exception as this is normal situation... all we need to do is just continue our iteration
                             //and gather necessary information.
                             try {
-                                $property === 'url'
+                                $property === 'uri'
                                     ? $auction[$property] = $node->filter($tag)->first()->attr('href')
                                     : $auction[$property] = $node->filter($tag)->first()->text();
                             } catch (\InvalidArgumentException $exception) {
@@ -73,7 +77,7 @@ class AuctionsParser
                             }
                         };
                     }
-                    $auction['auction_id']  = static::getAuctionId($auction['url']);
+                    $auction['auction_id']  = static::getAuctionId($auction['uri']);
                     $auction['lots_number'] = static::clearLotsNumber($auction['lots_number']);
                     $auction['start_date']  = static::transformDate($auction['start_date']);
                     $auctions_data[]        = $auction;
@@ -91,15 +95,20 @@ class AuctionsParser
     /**
      * @param string $url
      * @return false|string
+     * @throws \Exception
      */
     private static function getAuctionId (string $url)
     {
-        $ques_mark_pos = strpos($url, '?');
-        $slash_pos     = strrpos($url, '/');
+        try {
+            $ques_mark_pos = strpos($url, '?');
+            $slash_pos     = strrpos($url, '/');
 
-        return $ques_mark_pos
-            ? substr($url,  ($slash_pos + 1), ($ques_mark_pos - $slash_pos))
-            : substr($url,  ($slash_pos + 1));
+            return $ques_mark_pos
+                ? substr($url,  ($slash_pos + 1), ($ques_mark_pos - $slash_pos))
+                : substr($url,  ($slash_pos + 1));
+        } catch (\Throwable $exception) {
+            throw new \Exception('Getting auction ID from URL failed! Reason: ' . $exception->getMessage());
+        }
     }
 
 
@@ -110,16 +119,5 @@ class AuctionsParser
     private static function clearLotsNumber (string $lots_number)
     {
         return preg_replace('#\D#', '', $lots_number);
-    }
-
-
-    /**
-     * @param string $date
-     * @return string
-     * @throws \Exception
-     */
-    private static function transformDate (string $date)
-    {
-        return (new Carbon(strtotime($date)))->toDateTimeString();
     }
 }

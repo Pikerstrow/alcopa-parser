@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+/**
+ * IMPORTANT!!! Route and controller for developing mode only (better debugging)!
+ * For development use command (php artisan parser:parse_alcopa)
+ */
 
 Route::group(['prefix' => 'parser'], static function () {
     Route::get("parse", 'Parser\ParserController@parse');
