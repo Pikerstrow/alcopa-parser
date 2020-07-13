@@ -99,9 +99,9 @@ class AuctionCarParser
             ];
             foreach ($map as $key => $value) {
                 if ($key === 'First produced') {
-                    $car_data[$value] = static::transformDate($car_characteristics[$key]);
+                    $car_data[$value] = !empty($car_characteristics[$key]) ? static::transformDate($car_characteristics[$key]) : null;
                 } else {
-                    $car_data[$value] = $car_characteristics[$key];
+                    $car_data[$value] = $car_characteristics[$key] ?? null;
                 }
             }
 
