@@ -20,14 +20,14 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         // Data Type
-        $dataType = $this->dataType('slug', 'users');
+        $dataType = $this->dataType('name', 'users');
         if (!$dataType->exists) {
             $dataType->fill([
                 'name' => 'users',
                 'display_name_singular' => 'Users',
                 'display_name_plural' => 'User',
                 'icon' => 'voyager-person',
-                'model_name' => 'TCG\\Voyager\\Models\\User',
+                'model_name' => 'App\\User',
                 'policy_name' => 'TCG\\Voyager\\Policies\\UserPolicy',
                 'controller' => 'TCG\\Voyager\\Http\\Controllers\\VoyagerUserController',
                 'generate_permissions' => 1,

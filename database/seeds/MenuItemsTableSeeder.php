@@ -50,6 +50,23 @@ class MenuItemsTableSeeder extends Seeder
 
         $menuItem = MenuItem::firstOrNew([
             'menu_id' => $menu->id,
+            'title' => 'Cars',
+            'url' => '',
+            'route' => 'voyager.auction_cars.index',
+        ]);
+        if (!$menuItem->exists) {
+            $menuItem->fill([
+                'target' => '_self',
+                'icon_class' => 'voyager-truck',
+                'color' => null,
+                'parent_id' => null,
+                'order' => 3,
+            ])->save();
+        }
+
+
+        $menuItem = MenuItem::firstOrNew([
+            'menu_id' => $menu->id,
             'title'   => __('voyager::seeders.menu_items.media'),
             'url'     => '',
             'route'   => 'voyager.media.index',
@@ -92,7 +109,7 @@ class MenuItemsTableSeeder extends Seeder
                 'icon_class' => 'voyager-lock',
                 'color'      => null,
                 'parent_id'  => null,
-                'order'      => 4,
+                'order'      => 5,
             ])->save();
         }
 

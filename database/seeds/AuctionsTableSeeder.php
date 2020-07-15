@@ -236,7 +236,7 @@ class AuctionsTableSeeder extends Seeder
 
 
         // Permissions
-        Permission::generateFor('auctions', ['browse', 'read']);
+        Permission::generateFor('auctions');
     }
 
     /**

@@ -30,6 +30,7 @@ class AuctionCar extends Model
     ];
 
 
+
     /**
      * @return BelongsTo
      */
@@ -37,6 +38,26 @@ class AuctionCar extends Model
     {
         return $this->belongsTo(Auction::class);
     }
+
+
+    /**
+     * @return BelongsTo
+     */
+    public function carMake(): BelongsTo
+    {
+        return $this->belongsTo(CarMake::class);
+    }
+
+
+    /**
+     * @return BelongsTo
+     */
+    public function carModel(): BelongsTo
+    {
+        return $this->belongsTo(CarModel::class);
+    }
+
+
 
     /**
      * @return HasMany
