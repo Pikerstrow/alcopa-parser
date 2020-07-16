@@ -67,14 +67,6 @@ class ParseAlcopaAuctions extends Command
     public function handle()
     {
         try {
-            Cache::flush();
-
-            $parsing_info = [
-                'Parser started!'
-            ];
-            Cache::put('parser', json_encode($parsing_info));
-
-
             $parser = new AuctionsParser();
             $auctions_data = $parser->parse();
 
@@ -87,15 +79,10 @@ class ParseAlcopaAuctions extends Command
                     ['auction_id' => $item['auction_id']],
                     $item
                 );
-                $parsing_info[] = "Auction {$auction->city} parsed. Lots number - {$auction->lots_number}";
-                Cache::put('parser', json_encode($parsing_info));
 
                 if (!in_array($auction->auction_id, $this->parsed_auctions)) {
                     $cars_parser = new AuctionCarsJsonParser();
                     $auction_cars_data = $cars_parser->parse($auction->uri);
-
-                    $parsing_info[] = "JSON with cars info for auction {$auction->city} parsed.";
-                    Cache::put('parser', json_encode($parsing_info));
 
                     foreach ($auction_cars_data as $category => $cars){
                         $bar_cars = $this->output->createProgressBar(count($cars));
@@ -106,9 +93,6 @@ class ParseAlcopaAuctions extends Command
                                 $car = $car_parser->parse();
                                 $this->parsed_cars[$auction->auction_id][] = $car->alcopa_car_id;
                                 $bar_cars->advance();
-
-                                $parsing_info[] = "Car with ID {$car->alcopa_car_id}  parsed.";
-                                Cache::put('parser', json_encode($parsing_info));
                             }
                         }
                         $bar_cars->finish();
