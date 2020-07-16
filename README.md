@@ -4,7 +4,7 @@
 ## Launching project
 
 1. Run "git clone https://github.com/Pikerstrow/alcopa-parser"
-2. Run "composer install"
+2. Go to project directory and run "composer install"
 2. Rename '.env.example' to '.env' and add necessary settings, including your localhost DB connection credentials (IMPORTANT! If key property is empty you need to run 'php artisan key:generate' command)
 3. Run 'php artisan migrate:fresh --seed' command.
 
