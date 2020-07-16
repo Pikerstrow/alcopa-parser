@@ -15,7 +15,9 @@ Note: '--seed' flag is important due to project uses Voyager Admin panel and all
 5. Access to admin panel:
 
     url: 'your-test-domain.test/admin';
+    
     login: 'admin@admin.com';
+    
     password: 'password';
     
 6. For launching parser all you need is just run 'php artisan parser:parse_alcopa' command :)
