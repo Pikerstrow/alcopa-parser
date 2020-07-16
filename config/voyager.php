@@ -146,6 +146,7 @@ return [
         'widgets' => [
             'App\\Widgets\\AuctionsDimmer',
             'App\\Widgets\\CarsDimmer',
+            'App\\Widgets\\CarsImagesCounterDimmer',
         ],
 
     ],
@@ -188,11 +189,14 @@ return [
 
     // Here you can specify additional assets you would like to be included in the master.blade
     'additional_css' => [
-        //'css/custom.css',
+        'css/admin.css',
+        'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css'
     ],
 
     'additional_js' => [
-        //'js/custom.js',
+        'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js',
+        'https://cdn.jsdelivr.net/npm/vue/dist/vue.js',
+        'https://unpkg.com/axios/dist/axios.min.js'
     ],
 
     'googlemaps' => [

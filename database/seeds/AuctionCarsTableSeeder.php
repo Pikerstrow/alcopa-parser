@@ -46,45 +46,17 @@ class AuctionCarsTableSeeder extends Seeder
         $dataType = DataType::where('name', 'auction_cars')->firstOrFail();
 
         $dataRow = $this->dataRow($dataType, 'id');
-        if (!$dataRow->exists) {
-            $dataRow->fill([
-                'type' => 'number',
-                'display_name' => 'id',
-                'required' => 1,
-                'browse' => 0,
-                'read' => 0,
-                'edit' => 0,
-                'add' => 0,
-                'delete' => 0,
-                'order' => 1,
-            ])->save();
-        }
-
-
-        $dataRow = $this->dataRow($dataType, 'auction_car_belongsto_auction_relationship');
         $dataRow->fill([
-            'type' => 'relationship',
-            'display_name' => 'Auction',
-            'required' => 0,
-            'browse' => 1,
+            'type' => 'number',
+            'display_name' => 'id',
+            'required' => 1,
+            'browse' => 0,
             'read' => 0,
             'edit' => 0,
             'add' => 0,
             'delete' => 0,
-            'details' => [
-                'model' => Auction::class,
-                'table' => 'auctions',
-                'type' => 'belongsTo',
-                'column' => 'auction_id',
-                'key' => 'id',
-                'label' => 'city',
-                'pivot_table' => '',
-                'pivot' => '0',
-                'taggable' => '0'
-            ],
-            'order' => 2,
+            'order' => 1,
         ])->save();
-
 
 
         $dataRow = $this->dataRow($dataType, 'car_make_id');
@@ -97,7 +69,10 @@ class AuctionCarsTableSeeder extends Seeder
             'edit' => 0,
             'add' => 0,
             'delete' => 0,
-            'order' => 3,
+            'order' => 2,
+            'details' => [
+                'view' => 'read_car_views.make'
+            ]
         ])->save();
 
 
@@ -120,9 +95,9 @@ class AuctionCarsTableSeeder extends Seeder
                 'label' => 'name',
                 'pivot_table' => '',
                 'pivot' => '0',
-                'taggable' => '0'
+                'taggable' => '0',
             ],
-            'order' => 4,
+            'order' => 3,
         ])->save();
 
 
@@ -136,7 +111,10 @@ class AuctionCarsTableSeeder extends Seeder
             'edit' => 0,
             'add' => 0,
             'delete' => 0,
-            'order' => 5,
+            'details' => [
+                'view' => 'read_car_views.model'
+            ],
+            'order' => 4,
         ])->save();
 
 
@@ -159,16 +137,16 @@ class AuctionCarsTableSeeder extends Seeder
                 'label' => 'name',
                 'pivot_table' => '',
                 'pivot' => '0',
-                'taggable' => '0'
+                'taggable' => '0',
             ],
-            'order' => 6,
+            'order' => 5,
         ])->save();
 
 
         $dataRow = $this->dataRow($dataType, 'auction_car_hasmany_auction_car_image_relationship');
         $dataRow->fill([
             'type' => 'relationship',
-            'display_name' => 'Image',
+            'display_name' => 'Photo',
             'required' => 0,
             'browse' => 1,
             'read' => 1,
@@ -186,8 +164,51 @@ class AuctionCarsTableSeeder extends Seeder
                 'pivot' => '0',
                 'taggable' => '0'
             ],
-            'order' => 7,
+            'order' => 6,
         ])->save();
+
+
+        $dataRow = $this->dataRow($dataType, 'auction_id');
+        $dataRow->fill([
+            'type' => 'number',
+            'display_name' => 'Auction',
+            'required' => 1,
+            'browse' => 1,
+            'read' => 1,
+            'edit' => 0,
+            'add' => 0,
+            'delete' => 0,
+            'order' => 7,
+            'details' => [
+                'view' => 'read_car_views.auction'
+            ]
+        ])->save();
+
+
+        $dataRow = $this->dataRow($dataType, 'auction_car_belongsto_auction_relationship');
+        $dataRow->fill([
+            'type' => 'relationship',
+            'display_name' => 'Auction',
+            'required' => 0,
+            'browse' => 1,
+            'read' => 0,
+            'edit' => 0,
+            'add' => 0,
+            'delete' => 0,
+            'details' => [
+                'model' => Auction::class,
+                'table' => 'auctions',
+                'type' => 'belongsTo',
+                'column' => 'auction_id',
+                'key' => 'id',
+                'label' => 'city',
+                'pivot_table' => '',
+                'pivot' => '0',
+                'taggable' => '0',
+            ],
+            'order' => 8,
+        ])->save();
+
 
         $dataRow = $this->dataRow($dataType, 'category');
         if (!$dataRow->exists) {
@@ -200,23 +221,9 @@ class AuctionCarsTableSeeder extends Seeder
                 'edit' => 0,
                 'add' => 0,
                 'delete' => 0,
-                'order' => 8,
+                'order' => 9,
             ])->save();
         }
-
-        $dataRow = $this->dataRow($dataType, 'auction_id');
-        $dataRow->fill([
-            'type' => 'number',
-            'display_name' => 'Auction',
-            'required' => 1,
-            'browse' => 0,
-            'read' => 1,
-            'edit' => 0,
-            'add' => 0,
-            'delete' => 0,
-            'order' => 9,
-        ])->save();
-
 
 
         $dataRow = $this->dataRow($dataType, 'alcopa_car_id');
@@ -328,7 +335,6 @@ class AuctionCarsTableSeeder extends Seeder
         }
 
 
-
         $dataRow = $this->dataRow($dataType, 'first_produced');
         if (!$dataRow->exists) {
             $dataRow->fill([
@@ -429,7 +435,7 @@ class AuctionCarsTableSeeder extends Seeder
         if (!$dataRow->exists) {
             $dataRow->fill([
                 'type' => 'text',
-                'display_name' => 'Inspection report url',
+                'display_name' => 'Inspection report',
                 'required' => 0,
                 'browse' => 0,
                 'read' => 1,
@@ -437,6 +443,9 @@ class AuctionCarsTableSeeder extends Seeder
                 'add' => 0,
                 'delete' => 0,
                 'order' => 23,
+                'details' => [
+                    'view' => 'read_car_views.report_url'
+                ],
             ])->save();
         }
 

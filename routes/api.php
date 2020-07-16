@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/parser/start', 'Parser\ParserController@startParser')->name('start_parser');
+Route::post('/parser/get-progress', 'Parser\ParserController@getParserProgress')->name('parser_progress');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

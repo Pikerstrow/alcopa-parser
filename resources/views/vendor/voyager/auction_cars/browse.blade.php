@@ -1,4 +1,11 @@
 <?php
+/**
+ * @var TYPE_NAME $image_url
+ * @var TYPE_NAME $row
+ * @var TYPE_NAME $search
+ * @var TYPE_NAME $orderBy
+ * @var TYPE_NAME $sortOrder
+ */
 use App\AuctionCarImage;
 ?>
 @extends('voyager::master')
@@ -141,9 +148,15 @@ use App\AuctionCarImage;
                                                     @if($row->details->table === 'auction_car_images')
                                                         @php
                                                             $image = AuctionCarImage::whereAuctionCarId($data->id)->first();
-                                                            $image_url = $image ? asset($image->uri) : asset('placeholder.png')
+                                                            if ($image) {
+                                                                $image_url = AuctionCarImage::isXMLTypeOfFile($image->path) ? asset('placeholder.png') :  asset($image->uri);
+                                                            } else {
+                                                                $image_url = asset('placeholder.png');
+                                                            }
                                                         @endphp
-                                                        <img src="<?= $image_url ?>" style="width:100px">
+                                                        <a href="<?= $image_url ?>" data-fancybox data-caption="">
+                                                            <img src="<?= $image_url ?>" style="width:100px"/>
+                                                        </a>
                                                     @else
                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
                                                     @endif

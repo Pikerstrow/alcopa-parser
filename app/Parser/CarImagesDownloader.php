@@ -5,6 +5,7 @@ namespace App\Parser;
 
 
 use App\AuctionCar;
+use App\AuctionCarImage;
 use App\Exceptions\AuctionsParserException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class CarImagesDownloader
 {
     private const BASE_URL = 'https://www.alcopa-auction.fr/en/';
+    protected $base_path;
     protected $urls_list;
     protected $car;
 
@@ -24,6 +26,7 @@ class CarImagesDownloader
     {
         $this->urls_list = $list;
         $this->car       = $car;
+        $this->base_path = 'public' . DS . 'car_images' . DS . $car->auction_id;
     }
 
 
@@ -34,8 +37,11 @@ class CarImagesDownloader
     {
         try {
             foreach($this->urls_list as $url){
-                $image_data = $this->download($url);
-                $this->car->images()->updateOrCreate(['auction_car_id' => $this->car->id], $image_data);
+                $image_name_data = $this->getImageName($url);
+                $new_file_name = $this->base_path . DS . $this->car->alcopa_car_id . DS . $image_name_data['name'] . '.' . $image_name_data['extension'];
+                if (!file_exists($new_file_name)) {
+                    $this->download($url, $new_file_name, $image_name_data);
+                }
             }
         } catch (\Throwable $exception) {
             throw new \Exception('Download images method failed. Reason: ' . $exception->getMessage());
@@ -45,10 +51,12 @@ class CarImagesDownloader
 
     /**
      * @param string $url
+     * @param string $new_file_name
+     * @param array $image_name_data
      * @return array
      * @throws AuctionsParserException
      */
-    public function download(string $url)
+    public function download(string $url, string $new_file_name, array $image_name_data)
     {
         try {
             $resource = curl_init($url);
@@ -62,7 +70,7 @@ class CarImagesDownloader
             curl_close($resource);
 
             if($result){
-                return $this->saveImage($url, $result);
+                return $this->saveImage($url, $result, $new_file_name, $image_name_data);
             } else {
                 Log::info(['image not downloaded' => 'URL: ' . $url . '. No result from CURL request']);
             }
@@ -95,25 +103,32 @@ class CarImagesDownloader
     /**
      * @param string $url
      * @param $response
+     * @param string $new_file_name
+     * @param array $image_name_data
      * @return array
      * @throws \Exception
      */
-    private function saveImage(string $url, $response): array
+    private function saveImage(string $url, $response, string $new_file_name, array $image_name_data): array
     {
         try {
-            $image_data = $this->getImageName($url);
-            $dynamic_path = 'public' . DS . 'car_images' . DS . $this->car->auction_id . DS . $this->car->alcopa_car_id;
-            if(!Storage::exists($dynamic_path)){
-                if (!Storage::makeDirectory($dynamic_path)) {
-                    throw new \Exception('Creating directory operation failed. Dir name: ' . $dynamic_path);
+            $directory = $this->base_path . DS . $this->car->alcopa_car_id;
+            if(!Storage::exists($directory)){
+                if (!Storage::makeDirectory($directory)) {
+                    throw new \Exception('Creating directory operation failed. Dir name: ' . $directory);
                 }
             }
-            $file_name = $dynamic_path . DS . $image_data['name'] . '.' . $image_data['extension'];
-            Storage::put($file_name, $response);
-            return [
-                'path' => $file_name,
-                'uri' => "car_images/{$this->car->auction_id}/{$this->car->alcopa_car_id}/{$image_data['name']}.{$image_data['extension']}"
+
+            Storage::put($new_file_name, $response);
+
+            $uri = "car_images/{$this->car->auction_id}/{$this->car->alcopa_car_id}/{$image_name_data['name']}.{$image_name_data['extension']}";
+
+            //Storing image data in DB
+            $image_data_db = [
+                'path' => $new_file_name,
+                'uri' => $uri
             ];
+            $this->car->images()->updateOrCreate(['uri' => $uri], $image_data_db);
+            return $image_data_db;
         } catch (\Throwable $exception) {
             throw new \Exception('Storing car image failed. Reason: ' . $exception->getMessage());
         }
