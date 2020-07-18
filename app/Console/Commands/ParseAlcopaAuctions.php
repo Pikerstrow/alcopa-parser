@@ -36,30 +36,6 @@ class ParseAlcopaAuctions extends Command
      */
     protected $description = 'Parses all current auctions from `https://alcopa-auction.fr/en/` and each car within auction' ;
 
-    /**
-     * ParseAlcopaAuctions constructor.
-     * @throws \Exception
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $last_parsing_info = ParserInfo::first();
-        if (!empty($last_parsing_info)) {
-            $now = new Carbon();
-            $last_parsing_date = new Carbon($last_parsing_info->last_parsing_date);
-
-            if ($now->diffInHours($last_parsing_date) > TIME_GAP_HOURS && !$last_parsing_info->last_parsing_result) {
-                if (!empty($last_parsing_info->parsed_auctions)) {
-                    $this->parsed_auctions = json_decode($last_parsing_info->parsed_auctions, true);
-                }
-                if (!empty($last_parsing_info->parsed_cars)) {
-                    $this->parsed_cars = json_decode($last_parsing_info->parsed_cars, true);
-                }
-            }
-        }
-    }
-
 
     /**
      * @throws \Exception
@@ -117,6 +93,28 @@ class ParseAlcopaAuctions extends Command
                 'parsed_auctions' => json_encode($this->parsed_auctions),
                 'parsed_cars' => json_encode($this->parsed_cars)
             ]);
+        }
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function getLastParsingInfo()
+    {
+        $last_parsing_info = ParserInfo::first();
+        if (!empty($last_parsing_info)) {
+            $now = new Carbon();
+            $last_parsing_date = new Carbon($last_parsing_info->last_parsing_date);
+
+            if ($now->diffInHours($last_parsing_date) > TIME_GAP_HOURS && !$last_parsing_info->last_parsing_result) {
+                if (!empty($last_parsing_info->parsed_auctions)) {
+                    $this->parsed_auctions = json_decode($last_parsing_info->parsed_auctions, true);
+                }
+                if (!empty($last_parsing_info->parsed_cars)) {
+                    $this->parsed_cars = json_decode($last_parsing_info->parsed_cars, true);
+                }
+            }
         }
     }
 }
