@@ -20,7 +20,10 @@ Note: '--seed' flag is important due to project uses Voyager Admin panel and all
     
     password: 'password';
     
-6. For launching parser all you need is just run 'php artisan parser:parse_alcopa' command :)
+6. In admin panel you will see orangle box with information about necessary links andsense. Just click Fix It.    
+7. For launching parser all you need is just run 'php artisan parser:parse_alcopa' command :)
+
+## IMPORTANT NOTE. Sometimes car images aren't displaying in cars table or car details view after parsing (or partial parsing). Just run 'php artisan storage:link' one more time.
     
     
     
